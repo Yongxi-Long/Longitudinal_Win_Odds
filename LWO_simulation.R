@@ -1,4 +1,4 @@
-library(geepack)
+library(lwo)
 # working correlation used for modeling
 corstr_working <- "ar1"
 # store the simulation results
@@ -7,13 +7,15 @@ results <- vector(mode = "list",length = nsim)
 for(i in 1:nsim)
 {
 
-  dat <- gen_data(N,
-                  baseprobs,
-                  covs_effects,
-                  time_effects,
-                  time_trt_effects,
-                  visits,
-                  corMatrix)
+  dat <- suppressMessages({
+    gen_data(N = N,
+             baseprobs = baseprobs,
+             covs_effects = covs_effects,
+             time_effects = time_effects,
+             time_trt_effects = time_trt_effects,
+             visits = visits,
+             corMatrix = corMatrix)
+  })
   dat_wide <- dat$wide_format
   dat_long <- dat$long_format
   
@@ -21,7 +23,7 @@ for(i in 1:nsim)
   dat_long <- dat_long |>
     mutate(w4 = 1*(visit=="week4"),w8 = 1*(visit=="week8"))
   # model time categorically
-    mod_lwo <- tryCatch(expr = {lwo(GBS_DS ~ trt + 
+  mod_lwo <- tryCatch(expr = {lwo(score ~ trt + 
                                       trt:w4 + trt:w8+
                                       age + pre_diarrhea ,
                                     data = dat_long,
@@ -29,8 +31,8 @@ for(i in 1:nsim)
                                     visit.var = "visit",
                                     time.vars = c("w4","w8"),
                                     corstr = corstr_working,
-                                  #   std.err = "san.se")
-                                    std.err = "san.se.modified")
+                                     std.err = "san.se")
+                                  #  std.err = "san.se.modified")
       },
                         error = function(e)
                           {
@@ -45,6 +47,7 @@ for(i in 1:nsim)
       # coverage on the log win odds scale
       CI_95 <- cbind( rep(NA,length(visits)), rep(NA,length(visits)))
       coverage_CI_95 <-  rep(NA,length(visits))
+      p_val_global_null <- NA
     } else
     {
       trans_matrix <- matrix(c(1,0,0,0,0,
@@ -68,6 +71,6 @@ for(i in 1:nsim)
   results[[i]] <- list(est_log_wos,var_log_wos,CI_95,coverage_CI_95,p_val_global_null)
   if(i%%10==0)
    {print(i)
-   save(results,file=paste0("results/results-modified-N",N,"-rho",rho,"-",scenario,".RData"))
+   save(results,file=paste0("results/results-comp-N",N,"-rho",rho,"-",scenario,".RData"))
  }
 }

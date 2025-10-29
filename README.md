@@ -1,0 +1,40 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# Longitudinal_Win_Odds
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This repository contains R code for the simulation study and application
+example of the paper: *Longitudinal extension of the win odds for
+ordinal repeated measurements*
+
+## The *lwo* package
+
+We have created an R package [lwo](https://github.com/Yongxi-Long/lwo)
+for implementing the proposed method, it can be installed from GitHub
+via
+
+``` r
+# install.packages("pak")
+pak::pak("Yongxi-Long/lwo")
+```
+
+## Simulation study
+
+- The file lwo_simulation_study.qmd documents the setup of the
+  simulation scenarios and the evaluation of the simulation results.
+- lwo_simulation_study.qmd calls the LWO_simulation.R to run
+  simulations.
+
+## Application to SID-GBS
+
+- The file lwo_analysis_example showcases the application of the
+  proposed method to historical trial data, the SID-GBS trial (Walgaard,
+  C., Second intravenous immunoglobulin dose in patients with
+  Guillain-Barré syndrome with poor prognosis (SID-GBS): a double-blind,
+  randomised, placebo-controlled trial. The Lancet Neurology, 20(4),
+  275-283.)
+- The trial data is not public-available, so the script also provides a
+  way to simulate trial data.
